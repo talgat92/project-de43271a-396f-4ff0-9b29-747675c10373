@@ -78,10 +78,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "JAHAN — Мойка самообслуживания" },
-      { name: "description", content: "Современная мойка самообслуживания в Таразе. Проверьте баланс клубной карты JAHAN по номеру телефона." },
+      { name: "description", content: "Современная мойка самообслуживания в Таразе. Проверьте баланс и пополните клубную карту JAHAN по номеру телефона." },
       { name: "author", content: "JAHAN" },
       { property: "og:title", content: "JAHAN — Мойка самообслуживания" },
-      { property: "og:description", content: "Современная мойка самообслуживания. Проверьте баланс клубной карты по номеру телефона." },
+      { property: "og:description", content: "Современная мойка самообслуживания в Таразе. Проверьте баланс и пополните клубную карту JAHAN по номеру телефона." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@cars_wash_kz" },
@@ -152,6 +152,13 @@ function Header() {
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             Баланс
+          </Link>
+          <Link
+            to="/popolnenie"
+            activeProps={{ className: "text-wash-sky font-semibold" }}
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Пополнить
           </Link>
         </nav>
       </div>

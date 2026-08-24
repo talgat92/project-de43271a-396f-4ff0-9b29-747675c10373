@@ -49,12 +49,12 @@ function HomePage() {
             >
               Проверить баланс карты
             </Link>
-            <a
-              href="#features"
+            <Link
+              to="/popolnenie"
               className="inline-flex items-center justify-center rounded-xl border border-border bg-white px-8 py-4 text-base font-semibold text-foreground transition-colors hover:bg-muted"
             >
-              Узнать больше
-            </a>
+              Пополнить карту
+            </Link>
           </div>
         </div>
       </section>
@@ -135,6 +135,9 @@ function HomePage() {
             </Link>
             <Link to="/balance" className="text-sm text-muted-foreground hover:text-foreground">
               Проверка баланса
+            </Link>
+            <Link to="/popolnenie" className="text-sm text-muted-foreground hover:text-foreground">
+              Пополнение
             </Link>
           </div>
         </div>

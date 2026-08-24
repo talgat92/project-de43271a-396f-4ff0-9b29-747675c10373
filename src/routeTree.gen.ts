@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BalanceRouteImport } from './routes/balance'
+import { Route as PopolnenieRouteImport } from './routes/popolnenie'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,40 @@ const BalanceRoute = BalanceRouteImport.update({
   path: '/balance',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PopolnenieRoute = PopolnenieRouteImport.update({
+  id: '/popolnenie',
+  path: '/popolnenie',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/balance': typeof BalanceRoute
+  '/popolnenie': typeof PopolnenieRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/balance': typeof BalanceRoute
+  '/popolnenie': typeof PopolnenieRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/balance': typeof BalanceRoute
+  '/popolnenie': typeof PopolnenieRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/balance'
+  fullPaths: '/' | '/balance' | '/popolnenie'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/balance'
-  id: '__root__' | '/' | '/balance'
+  to: '/' | '/balance' | '/popolnenie'
+  id: '__root__' | '/' | '/balance' | '/popolnenie'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BalanceRoute: typeof BalanceRoute
+  PopolnenieRoute: typeof PopolnenieRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BalanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/popolnenie': {
+      id: '/popolnenie'
+      path: '/popolnenie'
+      fullPath: '/popolnenie'
+      preLoaderRoute: typeof PopolnenieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BalanceRoute: BalanceRoute,
+  PopolnenieRoute: PopolnenieRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
