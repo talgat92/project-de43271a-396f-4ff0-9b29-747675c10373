@@ -253,7 +253,18 @@ function FeatureCard({
   );
 }
 
+function CreditCardIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="20" height="14" x="2" y="5" rx="2" />
+      <line x1="2" x2="22" y1="10" y2="10" />
+      <circle cx="7" cy="15" r="1" />
+    </svg>
+  );
+}
+
 function DropIcon() {
+
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-6.5C14.5 6.8 13 4 12 2 11 4 9.5 6.8 8 8.5 6 11.1 5 13 5 15a7 7 0 0 0 7 7Z" />
