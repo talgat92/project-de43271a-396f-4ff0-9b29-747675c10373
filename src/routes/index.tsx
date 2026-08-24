@@ -1,4 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getLovableCredits } from "@/lib/credits.functions";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -59,7 +63,15 @@ function HomePage() {
         </div>
       </section>
 
+      {/* Lovable Credits */}
+      <section className="bg-background px-4 py-12 sm:py-16">
+        <div className="mx-auto max-w-3xl">
+          <CreditsWidget />
+        </div>
+      </section>
+
       {/* Features */}
+
       <section id="features" className="bg-background px-4 py-16 sm:py-24">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
@@ -146,7 +158,82 @@ function HomePage() {
   );
 }
 
+function CreditsWidget() {
+  const fetchCredits = useServerFn(getLovableCredits);
+  const { data, isLoading } = useQuery({
+    queryKey: ["lovable-credits"],
+    queryFn: fetchCredits,
+  });
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-wash-sky/10 text-wash-sky">
+          <CreditCardIcon />
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold text-card-foreground">Кредиты Lovable</h2>
+          <p className="text-xs text-muted-foreground">Остаток на сегодня и в текущем месяце</p>
+        </div>
+      </div>
+
+      {isLoading || !data ? (
+        <div className="mt-6 space-y-4">
+          <div className="h-12 animate-pulse rounded-xl bg-muted" />
+          <div className="h-12 animate-pulse rounded-xl bg-muted" />
+        </div>
+      ) : (
+        <div className="mt-6 grid gap-5 sm:grid-cols-2">
+          <CreditMeter
+            label="На сегодня"
+            remaining={data.daily.remaining}
+            total={data.daily.total}
+          />
+          <CreditMeter
+            label="В этом месяце"
+            remaining={data.monthly.remaining}
+            total={data.monthly.total}
+          />
+        </div>
+      )}
+
+      <p className="mt-4 text-xs text-muted-foreground">
+        Данные обновляются вручную. Lovable пока не предоставляет публичный API для баланса кредитов.
+      </p>
+    </div>
+  );
+}
+
+function CreditMeter({
+  label,
+  remaining,
+  total,
+}: {
+  label: string;
+  remaining: number;
+  total: number;
+}) {
+  const percent = total > 0 ? Math.min(100, Math.max(0, (remaining / total) * 100)) : 0;
+  return (
+    <div>
+      <div className="flex items-baseline justify-between">
+        <span className="text-sm font-medium text-card-foreground">{label}</span>
+        <span className="text-sm font-semibold text-wash-sky">
+          {remaining.toFixed(remaining % 1 === 0 ? 0 : 1)} / {total} кр.
+        </span>
+      </div>
+      <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-wash-sky/10">
+        <div
+          className="h-full rounded-full bg-wash-sky transition-all"
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 function FeatureCard({
+
   icon,
   title,
   description,
@@ -166,7 +253,18 @@ function FeatureCard({
   );
 }
 
+function CreditCardIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="20" height="14" x="2" y="5" rx="2" />
+      <line x1="2" x2="22" y1="10" y2="10" />
+      <circle cx="7" cy="15" r="1" />
+    </svg>
+  );
+}
+
 function DropIcon() {
+
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-6.5C14.5 6.8 13 4 12 2 11 4 9.5 6.8 8 8.5 6 11.1 5 13 5 15a7 7 0 0 0 7 7Z" />
