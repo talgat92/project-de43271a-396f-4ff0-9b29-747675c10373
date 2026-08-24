@@ -21,14 +21,27 @@ const DEMO_BALANCES: Record<string, number> = {
   "+7 (707) 222-22-22": 3200,
 };
 
+function normalizePhoneDigits(value: string): string {
+  let digits = value.replace(/\D/g, "");
+
+  // Если ввели 10 цифр без ведущей 7 (например, 7001234567 -> на самом деле 11),
+  // или старый формат с 8 в начале — приводим к единому виду.
+  if (digits.length === 10) {
+    digits = "7" + digits;
+  } else if (digits.length === 11 && digits.startsWith("8")) {
+    digits = "7" + digits.slice(1);
+  }
+
+  return digits;
+}
+
 function formatPhone(value: string): string {
-  const digits = value.replace(/\D/g, "");
+  const digits = normalizePhoneDigits(value);
   if (!digits) return "";
 
-  const country = digits[0] === "7" ? "7" : "";
-  const rest = country ? digits.slice(1) : digits;
+  let formatted = digits.startsWith("7") ? "+7" : "";
+  const rest = digits.startsWith("7") ? digits.slice(1) : digits;
 
-  let formatted = country === "7" ? "+7" : "";
   if (rest.length > 0) formatted += " (" + rest.slice(0, 3);
   if (rest.length >= 3) formatted += ")";
   if (rest.length > 3) formatted += " " + rest.slice(3, 6);
@@ -39,7 +52,7 @@ function formatPhone(value: string): string {
 }
 
 function isValidPhone(phone: string): boolean {
-  const digits = phone.replace(/\D/g, "");
+  const digits = normalizePhoneDigits(phone);
   return digits.length === 11 && digits.startsWith("7");
 }
 
