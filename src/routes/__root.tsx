@@ -153,6 +153,13 @@ function Header() {
           >
             Баланс
           </Link>
+          <Link
+            to="/popolnenie"
+            activeProps={{ className: "text-wash-sky font-semibold" }}
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Пополнить
+          </Link>
         </nav>
       </div>
     </header>

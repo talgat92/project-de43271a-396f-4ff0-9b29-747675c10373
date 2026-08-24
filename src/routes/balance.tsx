@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { formatPhone, isValidPhone } from "@/lib/phone";
 
 export const Route = createFileRoute("/balance")({
   head: () => ({
     meta: [
-      { title: "Проверка баланса — cars-wash.kz" },
-      { name: "description", content: "Проверьте баланс клубной карты cars-wash.kz по номеру телефона." },
-      { property: "og:title", content: "Проверка баланса — cars-wash.kz" },
-      { property: "og:description", content: "Проверьте баланс клубной карты cars-wash.kz по номеру телефона." },
+      { title: "Проверка баланса — JAHAN" },
+      { name: "description", content: "Проверьте баланс клубной карты JAHAN по номеру телефона." },
+      { property: "og:title", content: "Проверка баланса — JAHAN" },
+      { property: "og:description", content: "Проверьте баланс клубной карты JAHAN по номеру телефона." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -20,41 +21,6 @@ const DEMO_BALANCES: Record<string, number> = {
   "+7 (701) 111-11-11": 8750,
   "+7 (707) 222-22-22": 3200,
 };
-
-function normalizePhoneDigits(value: string): string {
-  let digits = value.replace(/\D/g, "");
-
-  // Если ввели 10 цифр без ведущей 7 (например, 7001234567 -> на самом деле 11),
-  // или старый формат с 8 в начале — приводим к единому виду.
-  if (digits.length === 10) {
-    digits = "7" + digits;
-  } else if (digits.length === 11 && digits.startsWith("8")) {
-    digits = "7" + digits.slice(1);
-  }
-
-  return digits;
-}
-
-function formatPhone(value: string): string {
-  const digits = normalizePhoneDigits(value);
-  if (!digits) return "";
-
-  let formatted = digits.startsWith("7") ? "+7" : "";
-  const rest = digits.startsWith("7") ? digits.slice(1) : digits;
-
-  if (rest.length > 0) formatted += " (" + rest.slice(0, 3);
-  if (rest.length >= 3) formatted += ")";
-  if (rest.length > 3) formatted += " " + rest.slice(3, 6);
-  if (rest.length > 6) formatted += "-" + rest.slice(6, 8);
-  if (rest.length > 8) formatted += "-" + rest.slice(8, 10);
-
-  return formatted;
-}
-
-function isValidPhone(phone: string): boolean {
-  const digits = normalizePhoneDigits(phone);
-  return digits.length === 11 && digits.startsWith("7");
-}
 
 function BalancePage() {
   const [phone, setPhone] = useState("");
