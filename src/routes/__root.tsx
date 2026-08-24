@@ -77,10 +77,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "cars-wash.kz — Мойка самообслуживания" },
-      { name: "description", content: "Современная мойка самообслуживания. Проверьте баланс клубной карты по номеру телефона." },
-      { name: "author", content: "cars-wash.kz" },
-      { property: "og:title", content: "cars-wash.kz — Мойка самообслуживания" },
+      { title: "JAHAN — Мойка самообслуживания" },
+      { name: "description", content: "Современная мойка самообслуживания в Таразе. Проверьте баланс клубной карты JAHAN по номеру телефона." },
+      { name: "author", content: "JAHAN" },
+      { property: "og:title", content: "JAHAN — Мойка самообслуживания" },
       { property: "og:description", content: "Современная мойка самообслуживания. Проверьте баланс клубной карты по номеру телефона." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -136,7 +136,7 @@ function Header() {
               <path d="M12 21h.01" />
             </svg>
           </span>
-          cars-wash.kz
+          JAHAN
         </Link>
         <nav className="flex items-center gap-4">
           <Link
