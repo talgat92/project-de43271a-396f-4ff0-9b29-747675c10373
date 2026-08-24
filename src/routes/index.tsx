@@ -63,7 +63,15 @@ function HomePage() {
         </div>
       </section>
 
+      {/* Lovable Credits */}
+      <section className="bg-background px-4 py-12 sm:py-16">
+        <div className="mx-auto max-w-3xl">
+          <CreditsWidget />
+        </div>
+      </section>
+
       {/* Features */}
+
       <section id="features" className="bg-background px-4 py-16 sm:py-24">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
