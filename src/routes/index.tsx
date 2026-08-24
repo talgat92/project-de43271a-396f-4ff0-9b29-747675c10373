@@ -3,10 +3,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "cars-wash.kz — Мойка самообслуживания" },
-      { name: "description", content: "Современная мойка самообслуживания с клубной картой. Проверьте баланс и мойте автомобиль быстро и выгодно." },
-      { property: "og:title", content: "cars-wash.kz — Мойка самообслуживания" },
-      { property: "og:description", content: "Современная мойка самообслуживания с клубной картой. Проверьте баланс и мойте автомобиль быстро и выгодно." },
+      { title: "JAHAN — Мойка самообслуживания" },
+      { name: "description", content: "Современная мойка самообслуживания в Таразе. Проверьте баланс клубной карты JAHAN и мойте автомобиль выгодно." },
+      { property: "og:title", content: "JAHAN — Мойка самообслуживания" },
+      { property: "og:description", content: "Современная мойка самообслуживания в Таразе. Проверьте баланс клубной карты JAHAN и мойте автомобиль выгодно." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -29,11 +29,14 @@ function HomePage() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-wash-sky opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-wash-sky" />
             </span>
-            Работаем 24/7
+            <div className="flex flex-col text-left">
+              <span>Работаем 24/7</span>
+              <span className="text-xs opacity-80">наш адрес г.Тараз</span>
+            </div>
           </div>
           <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             Мойка самообслуживания
-            <span className="block text-wash-sky">cars-wash.kz</span>
+            <span className="block text-wash-sky uppercase tracking-wider">JAHAN</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
             Современное оборудование, чистая вода и удобная клубная карта. Мойте автомобиль быстро,
@@ -124,7 +127,7 @@ function HomePage() {
       <footer className="border-t border-border bg-background px-4 py-8">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 sm:flex-row">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} cars-wash.kz — Мойка самообслуживания
+            © {new Date().getFullYear()} JAHAN — Мойка самообслуживания
           </p>
           <div className="flex items-center gap-6">
             <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
