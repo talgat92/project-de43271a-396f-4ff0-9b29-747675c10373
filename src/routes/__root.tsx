@@ -160,6 +160,13 @@ function Header() {
           >
             Пополнить
           </Link>
+          <Link
+            to="/admin"
+            activeProps={{ className: "text-wash-sky font-semibold" }}
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Админ
+          </Link>
         </nav>
       </div>
     </header>

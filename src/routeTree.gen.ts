@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BalanceRouteImport } from './routes/balance'
 import { Route as PopolnenieRouteImport } from './routes/popolnenie'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BalanceRoute = BalanceRouteImport.update({
@@ -31,30 +37,34 @@ const PopolnenieRoute = PopolnenieRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/balance': typeof BalanceRoute
   '/popolnenie': typeof PopolnenieRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/balance': typeof BalanceRoute
   '/popolnenie': typeof PopolnenieRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/balance': typeof BalanceRoute
   '/popolnenie': typeof PopolnenieRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/balance' | '/popolnenie'
+  fullPaths: '/' | '/admin' | '/balance' | '/popolnenie'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/balance' | '/popolnenie'
-  id: '__root__' | '/' | '/balance' | '/popolnenie'
+  to: '/' | '/admin' | '/balance' | '/popolnenie'
+  id: '__root__' | '/' | '/admin' | '/balance' | '/popolnenie'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   BalanceRoute: typeof BalanceRoute
   PopolnenieRoute: typeof PopolnenieRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/balance': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   BalanceRoute: BalanceRoute,
   PopolnenieRoute: PopolnenieRoute,
 }
