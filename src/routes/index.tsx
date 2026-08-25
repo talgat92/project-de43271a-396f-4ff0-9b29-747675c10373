@@ -149,6 +149,26 @@ function HomePage() {
   );
 }
 
+function FeatureCard({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="group rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
+      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-wash-sky/10 text-wash-sky transition-colors group-hover:bg-wash-sky group-hover:text-white">
+        {icon}
+      </div>
+      <h3 className="mt-4 text-lg font-semibold text-card-foreground">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
+    </div>
+  );
+}
+
 
 function DropIcon() {
 
