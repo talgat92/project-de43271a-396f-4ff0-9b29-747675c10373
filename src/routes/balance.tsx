@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { formatPhone, isValidPhone } from "@/lib/phone";
+import { formatPhone, isValidPhone, normalizePhoneDigits } from "@/lib/phone";
+import { getCardsByPhone, type Card } from "@/lib/api";
 
 export const Route = createFileRoute("/balance")({
   head: () => ({
@@ -16,25 +17,17 @@ export const Route = createFileRoute("/balance")({
   component: BalancePage,
 });
 
-const DEMO_BALANCES: Record<string, number> = {
-  "+7 (700) 000-00-00": 12500,
-  "+7 (701) 111-11-11": 8750,
-  "+7 (707) 222-22-22": 3200,
-};
-
 function BalancePage() {
   const [phone, setPhone] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [balance, setBalance] = useState<number | null>(null);
+  const [cards, setCards] = useState<Card[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value;
-    const formatted = formatPhone(raw);
-    setPhone(formatted);
+    setPhone(formatPhone(e.target.value));
     if (status !== "idle") {
       setStatus("idle");
-      setBalance(null);
+      setCards([]);
       setErrorMessage("");
     }
   };
@@ -49,19 +42,21 @@ function BalancePage() {
     }
 
     setStatus("loading");
-    setBalance(null);
+    setCards([]);
     setErrorMessage("");
 
-    // Имитация запроса к API. Замените на реальный вызов к бэкенду.
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    const foundBalance = DEMO_BALANCES[phone];
-    if (foundBalance !== undefined) {
-      setBalance(foundBalance);
+    try {
+      const found = await getCardsByPhone(normalizePhoneDigits(phone));
+      if (found.length === 0) {
+        setStatus("error");
+        setErrorMessage("Карта по этому номеру не найдена. Проверьте номер или обратитесь на мойку.");
+        return;
+      }
+      setCards(found);
       setStatus("success");
-    } else {
+    } catch {
       setStatus("error");
-      setErrorMessage("Карта по этому номеру не найдена. Проверьте номер или обратитесь на мойку.");
+      setErrorMessage("Не удалось связаться с сервером. Попробуйте позже.");
     }
   };
 
@@ -115,9 +110,7 @@ function BalancePage() {
                 maxLength={20}
                 autoComplete="tel"
               />
-              {status === "error" && (
-                <p className="mt-2 text-sm text-destructive">{errorMessage}</p>
-              )}
+              {status === "error" && <p className="mt-2 text-sm text-destructive">{errorMessage}</p>}
             </div>
 
             <button
@@ -125,57 +118,27 @@ function BalancePage() {
               disabled={status === "loading"}
               className="flex w-full items-center justify-center rounded-xl bg-wash-sky px-4 py-3.5 text-base font-semibold text-white shadow-lg shadow-wash-sky/25 transition-all hover:bg-wash-sky-dark hover:shadow-wash-sky/35 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {status === "loading" ? (
-                <>
-                  <svg
-                    className="mr-2 h-5 w-5 animate-spin"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  Проверяем...
-                </>
-              ) : (
-                "Проверить баланс"
-              )}
+              {status === "loading" ? "Проверяем..." : "Проверить баланс"}
             </button>
           </form>
 
-          {status === "success" && balance !== null && (
-            <div className="mt-6 rounded-2xl bg-wash-sky/10 p-6 text-center">
-              <p className="text-sm font-medium text-wash-sky-dark">Баланс карты</p>
-              <p className="mt-2 text-4xl font-extrabold text-wash-sky">
-                {balance.toLocaleString("ru-KZ")} ₸
-              </p>
-              <p className="mt-3 text-sm text-muted-foreground">
-                Номер: {phone}
-              </p>
+          {status === "success" && (
+            <div className="mt-6 space-y-4">
+              {cards.map((card) => (
+                <div key={card.id} className="rounded-2xl bg-wash-sky/10 p-6 text-center">
+                  <p className="text-sm font-medium text-wash-sky-dark">
+                    {card.name || "Клубная карта"}
+                  </p>
+                  <p className="mt-2 text-4xl font-extrabold text-wash-sky">
+                    {Number(card.balance).toLocaleString("ru-KZ")} ₸
+                  </p>
+                  <p className="mt-3 font-mono text-xs text-muted-foreground">
+                    UID: {card.card_uid}
+                  </p>
+                </div>
+              ))}
             </div>
           )}
-
-          <div className="mt-6 rounded-xl border border-border/60 bg-muted/40 p-4">
-            <p className="text-xs text-muted-foreground">
-              <span className="font-medium text-foreground">Демо-режим:</span> попробуйте номера{" "}
-              <span className="font-mono text-wash-sky-dark">+7 (700) 000-00-00</span>,{" "}
-              <span className="font-mono text-wash-sky-dark">+7 (701) 111-11-11</span> или{" "}
-              <span className="font-mono text-wash-sky-dark">+7 (707) 222-22-22</span>. В реальной
-              версии здесь будет подключение к вашему API.
-            </p>
-          </div>
         </div>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
