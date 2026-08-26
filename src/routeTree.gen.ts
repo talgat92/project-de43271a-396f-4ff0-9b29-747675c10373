@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BalanceRouteImport } from './routes/balance'
 import { Route as PopolnenieRouteImport } from './routes/popolnenie'
+import { Route as ApiPublicKaspi_payRouteImport } from './routes/api/public/kaspi_pay'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,25 @@ const PopolnenieRoute = PopolnenieRouteImport.update({
   path: '/popolnenie',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicKaspi_payRoute = ApiPublicKaspi_payRouteImport.update({
+  id: '/api/public/kaspi_pay',
+  path: '/api/public/kaspi_pay',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/balance': typeof BalanceRoute
   '/popolnenie': typeof PopolnenieRoute
+  '/api/public/kaspi_pay': typeof ApiPublicKaspi_payRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/balance': typeof BalanceRoute
   '/popolnenie': typeof PopolnenieRoute
+  '/api/public/kaspi_pay': typeof ApiPublicKaspi_payRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,21 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/balance': typeof BalanceRoute
   '/popolnenie': typeof PopolnenieRoute
+  '/api/public/kaspi_pay': typeof ApiPublicKaspi_payRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/balance' | '/popolnenie'
+  fullPaths:
+    '/' | '/admin' | '/balance' | '/popolnenie' | '/api/public/kaspi_pay'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/balance' | '/popolnenie'
-  id: '__root__' | '/' | '/admin' | '/balance' | '/popolnenie'
+  to: '/' | '/admin' | '/balance' | '/popolnenie' | '/api/public/kaspi_pay'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/balance'
+    | '/popolnenie'
+    | '/api/public/kaspi_pay'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +83,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   BalanceRoute: typeof BalanceRoute
   PopolnenieRoute: typeof PopolnenieRoute
+  ApiPublicKaspi_payRoute: typeof ApiPublicKaspi_payRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +116,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PopolnenieRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/kaspi_pay': {
+      id: '/api/public/kaspi_pay'
+      path: '/api/public/kaspi_pay'
+      fullPath: '/api/public/kaspi_pay'
+      preLoaderRoute: typeof ApiPublicKaspi_payRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +131,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   BalanceRoute: BalanceRoute,
   PopolnenieRoute: PopolnenieRoute,
+  ApiPublicKaspi_payRoute: ApiPublicKaspi_payRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
