@@ -11,8 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AdminJahanAuthRouteImport } from './routes/admin-jahan-auth'
 import { Route as BalanceRouteImport } from './routes/balance'
 import { Route as PopolnenieRouteImport } from './routes/popolnenie'
+import { Route as ApiPublicKaspi_payRouteImport } from './routes/api/public/kaspi_pay'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,6 +24,11 @@ const IndexRoute = IndexRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminJahanAuthRoute = AdminJahanAuthRouteImport.update({
+  id: '/admin-jahan-auth',
+  path: '/admin-jahan-auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BalanceRoute = BalanceRouteImport.update({
@@ -34,39 +41,71 @@ const PopolnenieRoute = PopolnenieRouteImport.update({
   path: '/popolnenie',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicKaspi_payRoute = ApiPublicKaspi_payRouteImport.update({
+  id: '/api/public/kaspi_pay',
+  path: '/api/public/kaspi_pay',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/admin-jahan-auth': typeof AdminJahanAuthRoute
   '/balance': typeof BalanceRoute
   '/popolnenie': typeof PopolnenieRoute
+  '/api/public/kaspi_pay': typeof ApiPublicKaspi_payRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/admin-jahan-auth': typeof AdminJahanAuthRoute
   '/balance': typeof BalanceRoute
   '/popolnenie': typeof PopolnenieRoute
+  '/api/public/kaspi_pay': typeof ApiPublicKaspi_payRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/admin-jahan-auth': typeof AdminJahanAuthRoute
   '/balance': typeof BalanceRoute
   '/popolnenie': typeof PopolnenieRoute
+  '/api/public/kaspi_pay': typeof ApiPublicKaspi_payRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/balance' | '/popolnenie'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/admin-jahan-auth'
+    | '/balance'
+    | '/popolnenie'
+    | '/api/public/kaspi_pay'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/balance' | '/popolnenie'
-  id: '__root__' | '/' | '/admin' | '/balance' | '/popolnenie'
+  to:
+    | '/'
+    | '/admin'
+    | '/admin-jahan-auth'
+    | '/balance'
+    | '/popolnenie'
+    | '/api/public/kaspi_pay'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/admin-jahan-auth'
+    | '/balance'
+    | '/popolnenie'
+    | '/api/public/kaspi_pay'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  AdminJahanAuthRoute: typeof AdminJahanAuthRoute
   BalanceRoute: typeof BalanceRoute
   PopolnenieRoute: typeof PopolnenieRoute
+  ApiPublicKaspi_payRoute: typeof ApiPublicKaspi_payRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -85,6 +124,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin-jahan-auth': {
+      id: '/admin-jahan-auth'
+      path: '/admin-jahan-auth'
+      fullPath: '/admin-jahan-auth'
+      preLoaderRoute: typeof AdminJahanAuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/balance': {
       id: '/balance'
       path: '/balance'
@@ -99,14 +145,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PopolnenieRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/kaspi_pay': {
+      id: '/api/public/kaspi_pay'
+      path: '/api/public/kaspi_pay'
+      fullPath: '/api/public/kaspi_pay'
+      preLoaderRoute: typeof ApiPublicKaspi_payRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  AdminJahanAuthRoute: AdminJahanAuthRoute,
   BalanceRoute: BalanceRoute,
   PopolnenieRoute: PopolnenieRoute,
+  ApiPublicKaspi_payRoute: ApiPublicKaspi_payRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
