@@ -127,14 +127,15 @@ export const deleteCard = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const s = await import("./jahan.server");
     if (!s.checkAdminPassword(data.password)) throw new Error("Unauthorized");
-    return s.apiFetchOr<{ ok: boolean }>(
-      `/api/cards.php?card_uid=${encodeURIComponent(data.card_uid)}`,
-      (() => {
-        s.demoDeleteCard(data.card_uid);
-        return { ok: true };
-      })(),
-      { method: "DELETE" },
-    );
+    try {
+      return await s.apiFetch<{ ok: boolean }>(
+        `/api/cards.php?card_uid=${encodeURIComponent(data.card_uid)}`,
+        { method: "DELETE" },
+      );
+    } catch {
+      s.demoDeleteCard(data.card_uid);
+      return { ok: true };
+    }
   });
 
 export const getLiveEvents = createServerFn({ method: "POST" })
