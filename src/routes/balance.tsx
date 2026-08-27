@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { formatPhone, isValidPhone, normalizePhoneDigits } from "@/lib/phone";
-import { getCardsByPhone, type Card } from "@/lib/api";
+import { getCardsByPhone, type Card } from "@/lib/jahan.functions";
 
 export const Route = createFileRoute("/balance")({
   head: () => ({

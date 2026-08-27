@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminJahanAuthRouteImport } from './routes/admin-jahan-auth'
 import { Route as BalanceRouteImport } from './routes/balance'
 import { Route as PopolnenieRouteImport } from './routes/popolnenie'
@@ -19,11 +18,6 @@ import { Route as ApiPublicKaspi_payRouteImport } from './routes/api/public/kasp
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminJahanAuthRoute = AdminJahanAuthRouteImport.update({
@@ -49,7 +43,6 @@ const ApiPublicKaspi_payRoute = ApiPublicKaspi_payRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/admin-jahan-auth': typeof AdminJahanAuthRoute
   '/balance': typeof BalanceRoute
   '/popolnenie': typeof PopolnenieRoute
@@ -57,7 +50,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/admin-jahan-auth': typeof AdminJahanAuthRoute
   '/balance': typeof BalanceRoute
   '/popolnenie': typeof PopolnenieRoute
@@ -66,7 +58,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/admin-jahan-auth': typeof AdminJahanAuthRoute
   '/balance': typeof BalanceRoute
   '/popolnenie': typeof PopolnenieRoute
@@ -76,7 +67,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin'
     | '/admin-jahan-auth'
     | '/balance'
     | '/popolnenie'
@@ -84,7 +74,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/admin-jahan-auth'
     | '/balance'
     | '/popolnenie'
@@ -92,7 +81,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/admin'
     | '/admin-jahan-auth'
     | '/balance'
     | '/popolnenie'
@@ -101,7 +89,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
   AdminJahanAuthRoute: typeof AdminJahanAuthRoute
   BalanceRoute: typeof BalanceRoute
   PopolnenieRoute: typeof PopolnenieRoute
@@ -115,13 +102,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin-jahan-auth': {
@@ -157,7 +137,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
   AdminJahanAuthRoute: AdminJahanAuthRoute,
   BalanceRoute: BalanceRoute,
   PopolnenieRoute: PopolnenieRoute,
