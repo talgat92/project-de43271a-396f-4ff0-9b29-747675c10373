@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { formatPhone, isValidPhone, normalizePhoneDigits } from "@/lib/phone";
-import { getCardsByPhone, type Card } from "@/lib/api";
+import { getCardsByPhone, type Card } from "@/lib/jahan.functions";
 
 export const Route = createFileRoute("/balance")({
   head: () => ({
@@ -46,7 +46,7 @@ function BalancePage() {
     setErrorMessage("");
 
     try {
-      const found = await getCardsByPhone(normalizePhoneDigits(phone));
+      const found = await getCardsByPhone({ data: { phone: normalizePhoneDigits(phone) } });
       if (found.length === 0) {
         setStatus("error");
         setErrorMessage("Карта по этому номеру не найдена. Проверьте номер или обратитесь на мойку.");
