@@ -95,6 +95,47 @@ export const adjustBalance = createServerFn({ method: "POST" })
     );
   });
 
+export const createCard = createServerFn({ method: "POST" })
+  .inputValidator((d: Auth & { card_uid: string; name: string; phone: string; balance?: number }) => ({
+    password: String(d.password ?? ""),
+    card_uid: String(d.card_uid ?? "").toUpperCase().trim(),
+    name: String(d.name ?? "").trim(),
+    phone: String(d.phone ?? "").replace(/\D/g, "").slice(0, 15),
+    balance: Number(d.balance) || 0,
+  }))
+  .handler(async ({ data }) => {
+    const s = await import("./jahan.server");
+    if (!s.checkAdminPassword(data.password)) throw new Error("Unauthorized");
+    if (!data.card_uid || !data.name || !data.phone) throw new Error("Заполните все поля");
+    const { password: _pw, ...payload } = data;
+    return s.apiFetchOr<{ ok: boolean }>(
+      "/api/cards.php",
+      (() => {
+        s.demoAddCard(payload);
+        return { ok: true };
+      })(),
+      { method: "POST", body: JSON.stringify(payload) },
+    );
+  });
+
+export const deleteCard = createServerFn({ method: "POST" })
+  .inputValidator((d: Auth & { card_uid: string }) => ({
+    password: String(d.password ?? ""),
+    card_uid: String(d.card_uid ?? "").toUpperCase().trim(),
+  }))
+  .handler(async ({ data }) => {
+    const s = await import("./jahan.server");
+    if (!s.checkAdminPassword(data.password)) throw new Error("Unauthorized");
+    return s.apiFetchOr<{ ok: boolean }>(
+      `/api/cards.php?card_uid=${encodeURIComponent(data.card_uid)}`,
+      (() => {
+        s.demoDeleteCard(data.card_uid);
+        return { ok: true };
+      })(),
+      { method: "DELETE" },
+    );
+  });
+
 export const getLiveEvents = createServerFn({ method: "POST" })
   .inputValidator(authInput)
   .handler(async ({ data }) => {
