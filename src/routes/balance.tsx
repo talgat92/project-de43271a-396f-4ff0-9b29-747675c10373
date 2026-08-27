@@ -46,7 +46,7 @@ function BalancePage() {
     setErrorMessage("");
 
     try {
-      const found = await getCardsByPhone(normalizePhoneDigits(phone));
+      const found = await getCardsByPhone({ data: { phone: normalizePhoneDigits(phone) } });
       if (found.length === 0) {
         setStatus("error");
         setErrorMessage("Карта по этому номеру не найдена. Проверьте номер или обратитесь на мойку.");
