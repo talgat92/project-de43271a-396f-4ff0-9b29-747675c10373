@@ -108,14 +108,15 @@ export const createCard = createServerFn({ method: "POST" })
     if (!s.checkAdminPassword(data.password)) throw new Error("Unauthorized");
     if (!data.card_uid || !data.name || !data.phone) throw new Error("Заполните все поля");
     const { password: _pw, ...payload } = data;
-    return s.apiFetchOr<{ ok: boolean }>(
-      "/api/cards.php",
-      (() => {
-        s.demoAddCard(payload);
-        return { ok: true };
-      })(),
-      { method: "POST", body: JSON.stringify(payload) },
-    );
+    try {
+      return await s.apiFetch<{ ok: boolean }>("/api/cards.php", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+    } catch {
+      s.demoAddCard(payload);
+      return { ok: true };
+    }
   });
 
 export const deleteCard = createServerFn({ method: "POST" })
