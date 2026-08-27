@@ -123,6 +123,28 @@ export const DEMO_CARDS: Card[] = [
   { id: 4, card_uid: "04D9E3B2", phone: "77475556677", name: "Талгат С.", balance: 24000, created_at: "2026-04-05", topups_count: 5 },
 ];
 
+/** Локальное добавление карты (когда PHP-бэкенд недоступен). */
+export function demoAddCard(input: { card_uid: string; name: string; phone: string; balance: number }): Card {
+  const card: Card = {
+    id: Math.max(0, ...DEMO_CARDS.map((c) => c.id)) + 1,
+    card_uid: input.card_uid,
+    name: input.name,
+    phone: input.phone,
+    balance: input.balance,
+    created_at: new Date().toISOString().slice(0, 10),
+    topups_count: 0,
+  };
+  DEMO_CARDS.unshift(card);
+  return card;
+}
+
+/** Локальное удаление карты (когда PHP-бэкенд недоступен). */
+export function demoDeleteCard(cardUid: string): boolean {
+  const i = DEMO_CARDS.findIndex((c) => c.card_uid === cardUid);
+  if (i >= 0) DEMO_CARDS.splice(i, 1);
+  return i >= 0;
+}
+
 export function demoBayStates(): BayState[] {
   return ALL_BAYS.map((bay_id) => {
     const day_kaspi = 8000 + bay_id * 900;
