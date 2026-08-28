@@ -536,7 +536,7 @@ function CardsModal({
       </div>
 
       {pending && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center bg-slate-950/80 p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/80 p-4">
           <div className={`${PANEL} w-full max-w-sm p-6`}>
             <h3 className="text-base font-bold text-slate-100">Удалить карту?</h3>
             <p className="mt-2 text-sm text-slate-400">
