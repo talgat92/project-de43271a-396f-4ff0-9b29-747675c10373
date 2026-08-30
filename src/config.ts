@@ -27,6 +27,7 @@ export const TXN_TYPES = [
   { value: "kaspi_topup", label: "Kaspi (пополнение карты)" },
   { value: "card_wash", label: "Списание с карты" },
   { value: "cash_pay", label: "Наличные" },
+  { value: "cash_collection", label: "Инкассация" },
 ] as const;
 
 export type TxnType = (typeof TXN_TYPES)[number]["value"];
