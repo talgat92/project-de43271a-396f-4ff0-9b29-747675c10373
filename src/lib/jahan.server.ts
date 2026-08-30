@@ -113,6 +113,8 @@ export interface BayState {
   day_kaspi: number;
   day_cash: number;
   month_total: number;
+  /** Накоплено наличных в купюроприёмнике (к инкассации). Не влияет на доход. */
+  current_cash_box: number;
   updated_at: string;
 }
 
