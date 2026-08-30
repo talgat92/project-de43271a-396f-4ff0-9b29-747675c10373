@@ -250,6 +250,9 @@ function Dashboard({ password, onLogout }: { password: string; onLogout: () => v
                   </div>
                   <p className="mt-3 text-xl font-bold text-cyan-300">{money(b.day_total)}</p>
                   <p className="text-xs text-slate-500">за сегодня · Kaspi {money(b.day_kaspi)}</p>
+                  <p className="mt-1 text-xs text-amber-300">
+                    В купюроприёмнике: {money(b.current_cash_box ?? 0)}
+                  </p>
                 </div>
               ))}
               {bayList.length === 0 && <p className="text-sm text-slate-500">Нет данных по постам.</p>}
