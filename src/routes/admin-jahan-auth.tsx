@@ -131,6 +131,7 @@ function Dashboard({ password, onLogout }: { password: string; onLogout: () => v
   const [txnType, setTxnType] = useState<string>("all");
   const [query, setQuery] = useState("");
   const [cardsOpen, setCardsOpen] = useState(false);
+  const [cashOpen, setCashOpen] = useState(false);
 
   const bays = useQuery({
     queryKey: ["bays"],
