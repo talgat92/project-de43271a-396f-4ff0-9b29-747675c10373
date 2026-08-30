@@ -147,6 +147,47 @@ export function demoDeleteCard(cardUid: string): boolean {
   return i >= 0;
 }
 
+/* ------- Накопленные наличные в купюроприёмнике (отдельно от дохода) --------- */
+
+/** Переопределения current_cash_box после инкассации (демо-режим). */
+const CASH_BOX_OVERRIDE = new Map<number, number>();
+
+/** Транзакции инкассации, созданные локально (демо-режим). */
+const COLLECTIONS: Transaction[] = [];
+
+function defaultCashBox(bay_id: number): number {
+  return 3800 + bay_id * 450;
+}
+
+/** Обнулить накопленные наличные по постам. Доход (day_cash/month) не меняется. */
+export function demoCollectCash(bayIds: number[]): { collected: number; bays: number[] } {
+  let collected = 0;
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+  for (const bay_id of bayIds) {
+    const amount = CASH_BOX_OVERRIDE.get(bay_id) ?? defaultCashBox(bay_id);
+    if (amount <= 0) continue;
+    collected += amount;
+    CASH_BOX_OVERRIDE.set(bay_id, 0);
+    COLLECTIONS.unshift({
+      id: Date.now() + bay_id,
+      card_uid: null,
+      bay_id,
+      amount,
+      type: "cash_collection",
+      txn_id: `COLLECT-${bay_id}-${Date.now()}`,
+      created_at: now,
+    });
+  }
+  if (COLLECTIONS.length > 200) COLLECTIONS.length = 200;
+  return { collected, bays: bayIds };
+}
+
+/** Сброс счётчика выемки купюр без влияния на статистику доходов. */
+export function demoResetCashCounter(bayIds: number[]): { ok: boolean } {
+  for (const bay_id of bayIds) CASH_BOX_OVERRIDE.set(bay_id, 0);
+  return { ok: true };
+}
+
 export function demoBayStates(): BayState[] {
   return ALL_BAYS.map((bay_id) => {
     const day_kaspi = 8000 + bay_id * 900;
@@ -160,6 +201,7 @@ export function demoBayStates(): BayState[] {
       day_cash,
       day_total: day_kaspi + day_cash,
       month_total: (day_kaspi + day_cash) * 26,
+      current_cash_box: CASH_BOX_OVERRIDE.get(bay_id) ?? defaultCashBox(bay_id),
       updated_at: "—",
     };
   });
@@ -167,7 +209,7 @@ export function demoBayStates(): BayState[] {
 
 export function demoTransactions(): Transaction[] {
   const types: TxnType[] = ["kaspi_direct", "kaspi_topup", "card_wash", "cash_pay"];
-  return ALL_BAYS.flatMap((bay_id, i) =>
+  const base = ALL_BAYS.flatMap((bay_id, i) =>
     types.map((type, j) => ({
       id: i * 10 + j,
       card_uid: type === "kaspi_direct" ? null : DEMO_CARDS[(i + j) % DEMO_CARDS.length]!.card_uid,
@@ -178,4 +220,5 @@ export function demoTransactions(): Transaction[] {
       created_at: `2026-08-26 1${j}:0${i % 6}:00`,
     })),
   );
+  return [...COLLECTIONS, ...base];
 }
