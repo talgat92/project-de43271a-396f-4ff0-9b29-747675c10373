@@ -356,6 +356,162 @@ function Dashboard({ password, onLogout }: { password: string; onLogout: () => v
           onClose={() => setCardsOpen(false)}
         />
       )}
+
+      {cashOpen && (
+        <CashModal
+          password={password}
+          building={building}
+          bays={bays.data ?? []}
+          refetch={() => {
+            void bays.refetch();
+            void txns.refetch();
+          }}
+          onClose={() => setCashOpen(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+function CashModal({
+  password,
+  building,
+  bays,
+  refetch,
+  onClose,
+}: {
+  password: string;
+  building: 1 | 2;
+  bays: BayState[];
+  refetch: () => void;
+  onClose: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const sorted = [...bays].sort((a, b) => a.bay_id - b.bay_id);
+  const buildingBays = BUILDINGS.find((b) => b.id === building)!.bays;
+  const totalAll = sorted.reduce((s, b) => s + (b.current_cash_box ?? 0), 0);
+
+  const run = async (fn: "collect" | "reset", bayIds: number[], label: string) => {
+    setBusy(true);
+    setError("");
+    setMsg("");
+    try {
+      if (fn === "collect") {
+        const res = await collectCash({ data: { password, bays: bayIds } });
+        setMsg(`${label}: снято ${money(res.collected ?? 0)}`);
+      } else {
+        await resetCashCounter({ data: { password, bays: bayIds } });
+        setMsg(`${label}: счётчик обнулён (доход не изменён)`);
+      }
+      refetch();
+    } catch {
+      setError("Не удалось выполнить операцию");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-950/80 p-4 backdrop-blur-sm">
+      <div role="dialog" aria-modal="true" aria-label="Инкассация наличных" className={`${PANEL} my-8 w-full max-w-3xl p-6`}>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="bg-gradient-to-r from-amber-300 to-orange-300 bg-clip-text text-lg font-bold text-transparent">
+              Инкассация наличных (Снятие)
+            </h2>
+            <p className="mt-1 text-xs text-slate-400">
+              Обнуляется только купюроприёмник. Дневная и месячная выручка постов сохраняется полностью.
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Закрыть"
+            className="rounded-lg border border-slate-700 p-2 text-slate-400 transition hover:bg-slate-800 hover:text-slate-200"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          <button
+            disabled={busy}
+            onClick={() => run("collect", buildingBays, `Здание ${building}`)}
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-400 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-60"
+          >
+            <Banknote className="h-4 w-4" /> Снять всё — здание {building}
+          </button>
+          <button
+            disabled={busy}
+            onClick={() => run("collect", sorted.map((b) => b.bay_id), "Все 12 постов")}
+            className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-60 ${ACCENT_BTN}`}
+          >
+            <Wallet className="h-4 w-4" /> Снять всё — все 12 боксов
+          </button>
+          <button
+            disabled={busy}
+            onClick={() => run("reset", sorted.map((b) => b.bay_id), "Счётчик выемки")}
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800 disabled:opacity-60"
+          >
+            <Minus className="h-4 w-4" /> Обнуливать накопленный наличка
+          </button>
+        </div>
+
+        {msg && <p className="mt-3 text-sm text-emerald-300">{msg}</p>}
+        {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+
+        <p className="mt-4 text-xs text-slate-400">
+          Всего к инкассации по 12 постам: <span className="font-semibold text-amber-300">{money(totalAll)}</span>
+        </p>
+
+        <div className="mt-3 max-h-[52vh] overflow-y-auto rounded-xl border border-amber-500/20">
+          <table className="w-full text-left text-sm">
+            <thead className="sticky top-0 bg-slate-900/95 text-xs uppercase text-slate-500">
+              <tr>
+                <th className="px-3 py-2">Пост</th>
+                <th className="px-3 py-2">В купюроприёмнике</th>
+                <th className="px-3 py-2">Наличные за день (доход)</th>
+                <th className="px-3 py-2"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {sorted.map((b) => (
+                <tr key={b.bay_id} className="border-t border-slate-800/80">
+                  <td className="px-3 py-2.5">
+                    Пост {b.bay_id} <span className="text-xs text-slate-500">· здание {b.building}</span>
+                  </td>
+                  <td className="px-3 py-2.5 font-semibold text-amber-300">{money(b.current_cash_box ?? 0)}</td>
+                  <td className="px-3 py-2.5 text-slate-400">{money(b.day_cash)}</td>
+                  <td className="px-3 py-2.5 text-right">
+                    <button
+                      disabled={busy || (b.current_cash_box ?? 0) <= 0}
+                      onClick={() => run("collect", [b.bay_id], `Пост ${b.bay_id}`)}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-amber-400/40 bg-amber-400/10 px-3 py-1.5 text-xs font-semibold text-amber-200 transition hover:bg-amber-400/20 disabled:opacity-40"
+                    >
+                      <Banknote className="h-3.5 w-3.5" /> Снять наличные
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {sorted.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="py-6 text-center text-slate-500">
+                    Нет данных по постам
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
