@@ -145,3 +145,43 @@ export const getLiveEvents = createServerFn({ method: "POST" })
     if (!s.checkAdminPassword(data.password)) throw new Error("Unauthorized");
     return s.listEvents();
   });
+
+/* ------------------------------ Инкассация ---------------------------------- */
+
+const baysInput = (d: Auth & { bays: number[] }) => ({
+  password: String(d.password ?? ""),
+  bays: (Array.isArray(d.bays) ? d.bays : []).map((n) => Number(n)).filter((n) => n >= 1 && n <= 12),
+});
+
+/** Снятие наличных: обнуляет купюроприёмник, доход постов не уменьшается. */
+export const collectCash = createServerFn({ method: "POST" })
+  .inputValidator(baysInput)
+  .handler(async ({ data }) => {
+    const s = await import("./jahan.server");
+    if (!s.checkAdminPassword(data.password)) throw new Error("Unauthorized");
+    if (data.bays.length === 0) return { ok: false, collected: 0 };
+    try {
+      const res = await s.apiFetch<{ ok: boolean; collected?: number }>("/api/cash_collection.php", {
+        method: "POST",
+        body: JSON.stringify({ bays: data.bays, action: "collect" }),
+      });
+      s.demoCollectCash(data.bays);
+      return { ok: true, collected: res.collected ?? 0 };
+    } catch {
+      const r = s.demoCollectCash(data.bays);
+      return { ok: true, collected: r.collected };
+    }
+  });
+
+/** Обнуление счётчика накопленной налички без записи транзакции и без влияния на доход. */
+export const resetCashCounter = createServerFn({ method: "POST" })
+  .inputValidator(baysInput)
+  .handler(async ({ data }) => {
+    const s = await import("./jahan.server");
+    if (!s.checkAdminPassword(data.password)) throw new Error("Unauthorized");
+    await s.apiFetchOr<{ ok: boolean }>("/api/cash_collection.php", { ok: true }, {
+      method: "POST",
+      body: JSON.stringify({ bays: data.bays, action: "reset" }),
+    });
+    return s.demoResetCashCounter(data.bays);
+  });
