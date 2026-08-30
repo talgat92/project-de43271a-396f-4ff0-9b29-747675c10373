@@ -198,13 +198,19 @@ function Dashboard({ password, onLogout }: { password: string; onLogout: () => v
           ))}
         </div>
 
-        {/* Клубные карты */}
-        <div className="mt-3">
+        {/* Клубные карты + инкассация */}
+        <div className="mt-3 flex flex-wrap gap-2">
           <button
             onClick={() => setCardsOpen(true)}
             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-fuchsia-500 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_-12px_rgba(217,70,239,0.9)] transition hover:from-fuchsia-400 hover:to-violet-400"
           >
             <CreditCard className="h-4 w-4" /> Клубные карты
+          </button>
+          <button
+            onClick={() => setCashOpen(true)}
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-400 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-[0_10px_30px_-12px_rgba(245,158,11,0.9)] transition hover:from-amber-400 hover:to-orange-300"
+          >
+            <Banknote className="h-4 w-4" /> Снять наличные
           </button>
         </div>
 
