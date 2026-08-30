@@ -22,12 +22,15 @@ import { BUILDINGS, TXN_TYPES } from "@/config";
 import {
   adjustBalance,
   adminLogin,
+  collectCash,
   createCard,
   deleteCard,
   getBayStates,
   getLiveEvents,
   getTransactions,
+  resetCashCounter,
   searchCards,
+  type BayState,
   type Card,
 } from "@/lib/jahan.functions";
 import { formatPhone } from "@/lib/phone";
